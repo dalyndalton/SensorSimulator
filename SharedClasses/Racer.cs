@@ -10,18 +10,7 @@ namespace SharedClasses
     {
         public string Name { get; set; }
         public int BibId { get; set; }
-        public int? Endtime
-        {
-            get => Endtime; set
-            {
-                Endtime = value;
-                foreach (var obs in Observers)
-                {
-                    obs.OnCompleted();
-                }
-            }
-        }
-
+        public int? Endtime { get; set; } = null;
         public RaceGroup group { get; private set; }
         public int CurrentSensor { get; private set; }
         public int LastTime
@@ -30,7 +19,7 @@ namespace SharedClasses
         public int Position { get; private set; }
         private List<IObserver<Racer>> Observers { get; set; }
 
-        public Racer(string name, int bibId, RaceGroup group, int starttime, int totalSensors)
+        public Racer(string name, int bibId, RaceGroup group)
         {
             this.Name = name;
             this.BibId = bibId;
@@ -38,6 +27,15 @@ namespace SharedClasses
             this.group = group;
             CurrentSensor = 0;
             LastTime = 0;
+        }
+
+        public static Racer parseRacer(string[] fields, Dictionary<int, RaceGroup> groupList)
+        {
+            return new Racer(
+                fields[0] + ' ' + fields[1],
+                Int32.Parse(fields[2]),
+                groupList[Int32.Parse(fields[3])]
+                );
         }
 
         public void UpdateRacer(int sensor, int time, int position)

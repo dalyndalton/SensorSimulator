@@ -1,7 +1,7 @@
-﻿using System.Net;
+﻿using Messages;
+using SharedClasses;
+using System.Net;
 using System.Net.Sockets;
-
-using Messages;
 
 namespace RacerServer
 {
@@ -10,6 +10,10 @@ namespace RacerServer
         private UdpClient udpClient;
         private bool keepGoing;
         private Thread myRunThread;
+
+        private Dictionary<int, Racer> racers { get; set; }
+        private Dictionary<int, RaceGroup> groups { get; set; }
+        private Dictionary<int, int> sensors { get; set; }
 
         public void Start()
         {
