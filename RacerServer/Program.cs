@@ -14,7 +14,7 @@ namespace RacerServer
             Dictionary<int, int> sensors = new();
 
             ApplicationConfiguration.Initialize();
-            DataReceiver reciever = new();
+            DataReceiver reciever = new(racers, groups, sensors);
 
             FileSelector fileSelector = new FileSelector();
             Application.Run(fileSelector);
@@ -79,7 +79,18 @@ namespace RacerServer
 
 
             // Start main file listener here
-            reciever.Start(racers, groups, sensors);
+            // Start Cheater computer and auto subscrible to all racers
+            var cheaterMonitor = new CheaterComputer();
+            foreach (var racer in racers.Values)
+            {
+                racer.Subscribe(cheaterMonitor);
+            }
+
+            reciever.Start();
+
+            // Start main GUI
+            RaceMonitor monitor = new RaceMonitor(racers, groups, sensors);
+            Application.Run(monitor);
         }
     }
 }

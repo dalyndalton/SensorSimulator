@@ -28,28 +28,22 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.RacerPool = new System.Windows.Forms.ListView();
+            this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.CurrentRacerPool = new System.Windows.Forms.ListView();
-            this.listView3 = new System.Windows.Forms.ListView();
             this.label3 = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
+            this.AddBigScreenObserverButton = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
-            this.listView4 = new System.Windows.Forms.ListView();
+            this.BigScreenList = new System.Windows.Forms.ListBox();
+            this.CurrentObserverBox = new System.Windows.Forms.ListBox();
+            this.CheaterScreenList = new System.Windows.Forms.ListBox();
+            this.AvailableRacers = new System.Windows.Forms.ListBox();
+            this.racerBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            ((System.ComponentModel.ISupportInitialize)(this.racerBindingSource)).BeginInit();
             this.SuspendLayout();
-            // 
-            // RacerPool
-            // 
-            this.RacerPool.Location = new System.Drawing.Point(548, 47);
-            this.RacerPool.Name = "RacerPool";
-            this.RacerPool.Size = new System.Drawing.Size(193, 419);
-            this.RacerPool.TabIndex = 0;
-            this.RacerPool.UseCompatibleStateImageBehavior = false;
-            this.RacerPool.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
             // 
             // label1
             // 
@@ -65,26 +59,9 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(289, 29);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(84, 15);
+            this.label2.Size = new System.Drawing.Size(146, 15);
             this.label2.TabIndex = 3;
-            this.label2.Text = "Current Racers";
-            // 
-            // CurrentRacerPool
-            // 
-            this.CurrentRacerPool.Location = new System.Drawing.Point(289, 47);
-            this.CurrentRacerPool.Name = "CurrentRacerPool";
-            this.CurrentRacerPool.Size = new System.Drawing.Size(193, 419);
-            this.CurrentRacerPool.TabIndex = 2;
-            this.CurrentRacerPool.UseCompatibleStateImageBehavior = false;
-            this.CurrentRacerPool.SelectedIndexChanged += new System.EventHandler(this.listView2_SelectedIndexChanged);
-            // 
-            // listView3
-            // 
-            this.listView3.Location = new System.Drawing.Point(12, 47);
-            this.listView3.Name = "listView3";
-            this.listView3.Size = new System.Drawing.Size(121, 223);
-            this.listView3.TabIndex = 4;
-            this.listView3.UseCompatibleStateImageBehavior = false;
+            this.label2.Text = "Currently Observed Racers";
             // 
             // label3
             // 
@@ -95,29 +72,31 @@
             this.label3.TabIndex = 5;
             this.label3.Text = "Race Screens";
             // 
-            // button2
+            // AddBigScreenObserverButton
             // 
-            this.button2.Location = new System.Drawing.Point(12, 276);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(61, 23);
-            this.button2.TabIndex = 7;
-            this.button2.Text = "Add";
-            this.button2.UseVisualStyleBackColor = true;
+            this.AddBigScreenObserverButton.Location = new System.Drawing.Point(13, 272);
+            this.AddBigScreenObserverButton.Name = "AddBigScreenObserverButton";
+            this.AddBigScreenObserverButton.Size = new System.Drawing.Size(61, 23);
+            this.AddBigScreenObserverButton.TabIndex = 7;
+            this.AddBigScreenObserverButton.Text = "Add";
+            this.AddBigScreenObserverButton.UseVisualStyleBackColor = true;
+            this.AddBigScreenObserverButton.Click += new System.EventHandler(this.BigScreenAdd);
             // 
             // button3
             // 
             this.button3.Font = new System.Drawing.Font("Segoe UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.button3.Location = new System.Drawing.Point(488, 207);
+            this.button3.Location = new System.Drawing.Point(488, 180);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(54, 42);
             this.button3.TabIndex = 8;
             this.button3.Text = "←";
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.ActivateObserver);
             // 
             // button4
             // 
             this.button4.Font = new System.Drawing.Font("Segoe UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.button4.Location = new System.Drawing.Point(488, 257);
+            this.button4.Location = new System.Drawing.Point(488, 230);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(54, 42);
             this.button4.TabIndex = 9;
@@ -126,7 +105,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(139, 276);
+            this.button1.Location = new System.Drawing.Point(139, 272);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(61, 23);
             this.button1.TabIndex = 12;
@@ -142,51 +121,91 @@
             this.label4.TabIndex = 11;
             this.label4.Text = "Cheater Screens";
             // 
-            // listView4
+            // BigScreenList
             // 
-            this.listView4.Location = new System.Drawing.Point(139, 47);
-            this.listView4.Name = "listView4";
-            this.listView4.Size = new System.Drawing.Size(121, 223);
-            this.listView4.TabIndex = 10;
-            this.listView4.UseCompatibleStateImageBehavior = false;
+            this.BigScreenList.DisplayMember = "ObsName";
+            this.BigScreenList.FormattingEnabled = true;
+            this.BigScreenList.ItemHeight = 15;
+            this.BigScreenList.Location = new System.Drawing.Point(13, 52);
+            this.BigScreenList.Name = "BigScreenList";
+            this.BigScreenList.Size = new System.Drawing.Size(120, 214);
+            this.BigScreenList.TabIndex = 13;
+            this.BigScreenList.SelectedIndexChanged += new System.EventHandler(this.BigScreenList_SelectedIndexChanged);
+            this.BigScreenList.DoubleClick += new System.EventHandler(this.BigScreenReopen);
+            // 
+            // CurrentObserverBox
+            // 
+            this.CurrentObserverBox.FormattingEnabled = true;
+            this.CurrentObserverBox.ItemHeight = 15;
+            this.CurrentObserverBox.Location = new System.Drawing.Point(290, 52);
+            this.CurrentObserverBox.Name = "CurrentObserverBox";
+            this.CurrentObserverBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.CurrentObserverBox.Size = new System.Drawing.Size(192, 394);
+            this.CurrentObserverBox.TabIndex = 15;
+            // 
+            // CheaterScreenList
+            // 
+            this.CheaterScreenList.FormattingEnabled = true;
+            this.CheaterScreenList.ItemHeight = 15;
+            this.CheaterScreenList.Location = new System.Drawing.Point(139, 52);
+            this.CheaterScreenList.Name = "CheaterScreenList";
+            this.CheaterScreenList.Size = new System.Drawing.Size(120, 214);
+            this.CheaterScreenList.TabIndex = 14;
+            // 
+            // AvailableRacers
+            // 
+            this.AvailableRacers.DisplayMember = "Name";
+            this.AvailableRacers.FormattingEnabled = true;
+            this.AvailableRacers.ItemHeight = 15;
+            this.AvailableRacers.Location = new System.Drawing.Point(548, 52);
+            this.AvailableRacers.Name = "AvailableRacers";
+            this.AvailableRacers.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.AvailableRacers.Size = new System.Drawing.Size(192, 394);
+            this.AvailableRacers.TabIndex = 16;
+            this.AvailableRacers.ValueMember = "Name";
+            // 
+            // racerBindingSource
+            // 
+            this.racerBindingSource.DataSource = typeof(SharedClasses.Racer);
             // 
             // RaceMonitor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(753, 478);
+            this.Controls.Add(this.AvailableRacers);
+            this.Controls.Add(this.CurrentObserverBox);
+            this.Controls.Add(this.CheaterScreenList);
+            this.Controls.Add(this.BigScreenList);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.listView4);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.AddBigScreenObserverButton);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.listView3);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.CurrentRacerPool);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.RacerPool);
             this.Name = "RaceMonitor";
             this.Text = "Race Monitor";
+            ((System.ComponentModel.ISupportInitialize)(this.racerBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private ListView RacerPool;
         private Label label1;
         private Label label2;
-        private ListView CurrentRacerPool;
-        private ListView listView3;
         private Label label3;
-        private Button button2;
+        private Button AddBigScreenObserverButton;
         private Button button3;
         private Button button4;
         private Button button1;
         private Label label4;
-        private ListView listView4;
+        private ListBox BigScreenList;
+        private ListBox CheaterScreenList;
+        private ListBox CurrentObserverBox;
+        private ListBox AvailableRacers;
+        private BindingSource racerBindingSource;
     }
 }

@@ -10,8 +10,7 @@ namespace SharedClasses
     {
         public string Name { get; set; }
         public int BibId { get; set; }
-        public int? Endtime { get; set; } = null;
-        public RaceGroup group { get; private set; }
+        public RaceGroup RaceGroup { get; private set; }
         public int CurrentSensor { get; private set; }
         public int LastTime
         { get; private set; }
@@ -24,7 +23,7 @@ namespace SharedClasses
             this.Name = name;
             this.BibId = bibId;
             this.Observers = new List<IObserver<Racer>>();
-            this.group = group;
+            this.RaceGroup = group;
             CurrentSensor = 0;
             LastTime = 0;
         }
@@ -55,6 +54,11 @@ namespace SharedClasses
             }
 
             return new Unsubscriber(Observers, observer);
+        }
+
+        public override string? ToString()
+        {
+            return Name;
         }
 
         private class Unsubscriber : IDisposable
