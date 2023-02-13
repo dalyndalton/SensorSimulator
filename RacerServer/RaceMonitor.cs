@@ -54,6 +54,7 @@ namespace RacerServer
                 {
                     this.AvailableRacers.Items.Add(racer);
                 }
+
             }
 
         }
