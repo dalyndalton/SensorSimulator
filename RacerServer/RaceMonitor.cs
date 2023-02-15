@@ -21,8 +21,32 @@ namespace RacerServer
 
         private void ActivateObserver(object sender, EventArgs e)
         {
-        }
+            var obs = BigScreenList.SelectedItem as BigScreen;
+            if (obs == null) return;
 
+            List<Racer> selectedRacers = new();
+
+            // Get each availabe racer
+            foreach (var rac in AvailableRacers.SelectedItems)
+            {
+                selectedRacers.Add(rac as Racer);
+            }
+
+            // Remove racers from available list
+            while (AvailableRacers.SelectedItems.Count > 0)
+            {
+                AvailableRacers.Items.RemoveAt(AvailableRacers.SelectedIndex);
+            }
+
+            // Subscribe to the new racers
+            foreach (var rac in selectedRacers)
+            {
+                obs.SubscribeToRacer(rac);
+            }
+
+            // Update the Current Observer Box
+            selectedRacers.ForEach(rac => CurrentObserverBox.Items.Add(rac));
+        }
 
         private void BigScreenAdd(object sender, EventArgs e)
         {

@@ -44,7 +44,7 @@ namespace RacerServer
 
         public void OnNext(Racer value)
         {
-            if (value.CurrentSensor > 1)
+            if (value.CurrentSensor >= 1 && timelist.ContainsKey(value.CurrentSensor))
             {
                 // Check for cheater
                 var friends = from time in this.timelist[value.CurrentSensor - 1]
@@ -53,6 +53,7 @@ namespace RacerServer
                 var newFriends = from time in this.timelist[value.CurrentSensor]
                                  where Math.Abs(time.Value - value.LastTime) <= 3000 && time.Key != value && time.Key.RaceGroup != value.RaceGroup
                                  select time.Key;
+
                 var sharedFriends = friends.Intersect(newFriends);
                 if (sharedFriends.Any())
                 {

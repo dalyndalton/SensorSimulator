@@ -56,9 +56,9 @@ namespace SharedClasses
             return new Unsubscriber(Observers, observer);
         }
 
-        public override string? ToString()jkljl;k;jklkljl;kjlk
+        public override string? ToString()
         {
-            return $"G{RaceGroup.}{Name}";
+            return $"G{RaceGroup.GroupName} : {Name}";
         }
 
         private class Unsubscriber : IDisposable

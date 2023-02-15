@@ -31,16 +31,33 @@ namespace RacerServer
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("");
             this.listView1 = new System.Windows.Forms.ListView();
+            this.Name = new System.Windows.Forms.ColumnHeader();
+            this.Group = new System.Windows.Forms.ColumnHeader();
+            this.Position = new System.Windows.Forms.ColumnHeader();
+            this.LastSeen = new System.Windows.Forms.ColumnHeader();
             this.SuspendLayout();
             // 
             // listView1
             // 
+            this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.Name,
+            this.Group,
+            this.Position,
+            this.LastSeen});
+            this.listView1.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
+            listViewItem1});
             this.listView1.Location = new System.Drawing.Point(12, 35);
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(776, 403);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
+            this.listView1.View = System.Windows.Forms.View.List;
+            // 
+            // Group
+            // 
+            this.Group.Text = "e";
             // 
             // BigScreen
             // 
@@ -58,5 +75,9 @@ namespace RacerServer
         #endregion
 
         private ListView listView1;
+        private ColumnHeader Name;
+        private ColumnHeader Group;
+        private ColumnHeader Position;
+        private ColumnHeader LastSeen;
     }
 }

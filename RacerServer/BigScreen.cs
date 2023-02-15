@@ -53,6 +53,27 @@ namespace RacerServer
             }
         }
 
+        public void SubscribeToRacer(Racer value)
+        {
+            var unsub = value.Subscribe(this);
+            Racers.Add(value, unsub);
+
+            // Create the listView Items
+            var item = new ListViewItem()
+            {
+                Text = value.Name,
+                Tag = value,
+            };
+            item.SubItems.Add(value.RaceGroup.ToString());
+
+        }
+
+        public void UnsubscribeToRacer(Racer value)
+        {
+            Racers[value].Dispose();
+            Racers.Remove(value);
+        }
+
         private void BigScreen_FormClosing(object sender, FormClosingEventArgs e)
         {
             this.Hide();
