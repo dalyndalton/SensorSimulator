@@ -6,44 +6,55 @@ using System.Threading.Tasks;
 
 namespace SharedClasses
 {
-    public class Racer : IObservable<Racer>
+    public class Racer : IObservable<Racer>, IComparable<Racer>
     {
         public string Name { get; set; }
         public int BibId { get; set; }
         public RaceGroup RaceGroup { get; private set; }
         public int CurrentSensor { get; private set; }
-        public int LastTime
-        { get; private set; }
-
         public int Position { get; private set; }
-        private List<IObserver<Racer>> Observers { get; set; }
+        public int LastTime { get; private set; }
 
-        public Racer(string name, int bibId, RaceGroup group)
+        private List<IObserver<Racer>> Observers { get; set; }
+        
+        // We distinquish cheater cpu so that we don't send positon updates
+        private IObserver<Racer> CheaterCPU { get; set; }
+
+        public Racer(string name, int bibId, RaceGroup group, IObserver<Racer> cpu)
         {
             this.Name = name;
             this.BibId = bibId;
             this.Observers = new List<IObserver<Racer>>();
             this.RaceGroup = group;
+            this.Position = 0;
+            this.CheaterCPU = cpu;
             CurrentSensor = 0;
             LastTime = 0;
         }
 
-        public static Racer parseRacer(string[] fields, Dictionary<int, RaceGroup> groupList)
+        public static Racer parseRacer(string[] fields, Dictionary<int, RaceGroup> groupList, IObserver<Racer> cpu)
         {
             return new Racer(
                 fields[0] + ' ' + fields[1],
                 Int32.Parse(fields[2]),
-                groupList[Int32.Parse(fields[3])]
+                groupList[Int32.Parse(fields[3])],
+                cpu
                 );
         }
 
-        public void UpdateRacer(int sensor, int time, int position)
+        public void UpdateRacerSensor(int sensor, int time)
         {
             this.CurrentSensor = sensor;
             this.LastTime = time;
-            this.Position = position;
 
+            CheaterCPU.OnNext(this);
             Observers.ForEach((obs) => obs.OnNext(this));
+        }
+
+        public void UpdateRacerPosition(int position)
+        {
+            this.Position = position;
+            foreach(var obs in Observers) obs.OnNext(this);
         }
 
         public IDisposable Subscribe(IObserver<Racer> observer)
@@ -53,12 +64,24 @@ namespace SharedClasses
                 Observers.Add(observer);
             }
 
+            observer.OnNext(this);
             return new Unsubscriber(Observers, observer);
         }
 
         public override string? ToString()
         {
-            return $"G{RaceGroup.GroupName} : {Name}";
+            return $"# {this.BibId.ToString().PadLeft(4)} : {Name}";
+        }
+
+        public int CompareTo(Racer? other)
+        {
+            if (this.CurrentSensor > other.CurrentSensor) return 1;
+            if (this.CurrentSensor < other.CurrentSensor) return -1;
+
+            if (this.LastTime < other.LastTime) return 1;
+            if (this.LastTime > other.LastTime) return -1;
+
+            return 0;
         }
 
         private class Unsubscriber : IDisposable

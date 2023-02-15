@@ -1,9 +1,4 @@
 ﻿using SharedClasses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RacerServer
 {
@@ -47,24 +42,24 @@ namespace RacerServer
             if (value.CurrentSensor >= 1 && timelist.ContainsKey(value.CurrentSensor))
             {
                 // Check for cheater
-                var friends = from time in this.timelist[value.CurrentSensor - 1]
-                              where Math.Abs(time.Value - value.LastTime) <= 3000 && time.Key != value && time.Key.RaceGroup != value.RaceGroup
-                              select time.Key;
-                var newFriends = from time in this.timelist[value.CurrentSensor]
-                                 where Math.Abs(time.Value - value.LastTime) <= 3000 && time.Key != value && time.Key.RaceGroup != value.RaceGroup
-                                 select time.Key;
+                IEnumerable<Racer> friends = from time in this.timelist[value.CurrentSensor - 1]
+                                             where Math.Abs(time.Value - value.LastTime) <= 3000 && time.Key != value && time.Key.RaceGroup != value.RaceGroup
+                                             select time.Key;
+                IEnumerable<Racer> newFriends = from time in this.timelist[value.CurrentSensor]
+                                                where Math.Abs(time.Value - value.LastTime) <= 3000 && time.Key != value && time.Key.RaceGroup != value.RaceGroup
+                                                select time.Key;
 
-                var sharedFriends = friends.Intersect(newFriends);
+                IEnumerable<Racer> sharedFriends = friends.Intersect(newFriends);
                 if (sharedFriends.Any())
                 {
                     // add all cheating friends
-                    foreach(var friend in sharedFriends)
+                    foreach (Racer? friend in sharedFriends)
                     {
                         cheaters.Add(new Cheater(value, friend, value.CurrentSensor));
                     }
 
                     // Notify observers that cheating list has ben updated
-                    foreach(var sub in Observers)
+                    foreach (IObserver<CheaterComputer> sub in Observers)
                     {
                         sub.OnNext(this);
                     }
@@ -77,7 +72,7 @@ namespace RacerServer
                 timelist.Add(value.CurrentSensor, new Dictionary<Racer, int>());
             }
             // Log as seen
-            timelist[value.CurrentSensor].Add(value, value.LastTime);
+            timelist[value.CurrentSensor][value] = value.LastTime;
         }
 
         public IDisposable Subscribe(IObserver<CheaterComputer> observer)

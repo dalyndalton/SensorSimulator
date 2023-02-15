@@ -16,12 +16,15 @@ namespace RacerServer
             ApplicationConfiguration.Initialize();
             DataReceiver reciever = new(racers, groups, sensors);
 
-            FileSelector fileSelector = new FileSelector();
+            FileSelector fileSelector = new();
             Application.Run(fileSelector);
 
 
+            // Start Cheater computer and add to all racers
+            CheaterComputer cheaterMonitor = new();
+
             // Load in CSV's here
-            using (TextFieldParser parser = new TextFieldParser(fileSelector.GroupCSVPath))
+            using (TextFieldParser parser = new(fileSelector.GroupCSVPath))
             {
                 parser.TextFieldType = FieldType.Delimited;
                 parser.SetDelimiters(",");
@@ -40,7 +43,7 @@ namespace RacerServer
                 }
             }
 
-            using (TextFieldParser parser = new TextFieldParser(fileSelector.RacerCSVPath))
+            using (TextFieldParser parser = new(fileSelector.RacerCSVPath))
             {
                 parser.TextFieldType = FieldType.Delimited;
                 parser.SetDelimiters(",");
@@ -49,7 +52,7 @@ namespace RacerServer
                     try
                     {
                         string[] fields = parser.ReadFields();
-                        Racer racer = Racer.parseRacer(fields, groups);
+                        Racer racer = Racer.parseRacer(fields, groups, cheaterMonitor);
                         racers.Add(racer.BibId, racer);
                     }
                     catch (MalformedLineException e)
@@ -59,7 +62,7 @@ namespace RacerServer
                 }
             }
 
-            using (TextFieldParser parser = new TextFieldParser(fileSelector.SensorCSVPath))
+            using (TextFieldParser parser = new(fileSelector.SensorCSVPath))
             {
                 parser.TextFieldType = FieldType.Delimited;
                 parser.SetDelimiters(",");
@@ -79,17 +82,10 @@ namespace RacerServer
 
 
             // Start main file listener here
-            // Start Cheater computer and auto subscrible to all racers
-            var cheaterMonitor = new CheaterComputer();
-            foreach (var racer in racers.Values)
-            {
-                racer.Subscribe(cheaterMonitor);
-            }
-
             reciever.Start();
 
             // Start main GUI
-            RaceMonitor monitor = new RaceMonitor(racers, groups, sensors);
+            RaceMonitor monitor = new(racers, groups, sensors);
             Application.Run(monitor);
         }
     }

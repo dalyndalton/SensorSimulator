@@ -22,23 +22,23 @@ namespace RacerServer
         private Dictionary<int, Racer> racers { get; set; }
         private Dictionary<int, RaceGroup> groups { get; set; }
         private Dictionary<int, int> sensors { get; set; }
-        private Dictionary<int, Dictionary<RaceGroup, int>> positionTracker { get; set; }
+        private Dictionary<RaceGroup, List<Racer>> positionTracker { get; set; }
+
         public void Start()
         {
             udpClient = new UdpClient(14000);
             keepGoing = true;
 
-            Dictionary<RaceGroup, int> tracker = new Dictionary<RaceGroup, int>();
-            foreach (var g in groups)
+            foreach (KeyValuePair<int, RaceGroup> g in groups)
             {
-                tracker.Add(g.Value, 1);
+                positionTracker.Add(g.Value, new List<Racer>());
             }
 
-            // Build the postion board
-            foreach (var s in sensors)
+            foreach (var racer in racers.Values)
             {
-                positionTracker.Add(s.Key, new Dictionary<RaceGroup, int>(tracker));
+                positionTracker[racer.RaceGroup].Add(racer);
             }
+
 
             myRunThread = new Thread(new ThreadStart(Run));
             myRunThread.Start();
@@ -53,7 +53,7 @@ namespace RacerServer
         {
             while (keepGoing)
             {
-                IPEndPoint ep = new IPEndPoint(IPAddress.Any, 0);
+                IPEndPoint ep = new(IPAddress.Any, 0);
                 udpClient.Client.ReceiveTimeout = 1000;
                 byte[] messageByes;
                 try
@@ -66,17 +66,29 @@ namespace RacerServer
                         {
 
                             // Update Racer & Internal Position
-                            if (!racers.TryGetValue(statusMessage.RacerBibNumber, out var racer)) Console.WriteLine($"Invalid Bib: #={statusMessage.RacerBibNumber}");
+                            if (!racers.TryGetValue(statusMessage.RacerBibNumber, out Racer? racer)) Console.WriteLine($"Invalid Bib: #={statusMessage.RacerBibNumber}");
                             else
                             {
-                                int p = positionTracker[statusMessage.SensorId][racer.RaceGroup]++;
                                 // Debug console
                                 //Console.Write("Race Bib #={0}, Sensor={1}, Time={2}, Position={3}\r",
                                 //        statusMessage.RacerBibNumber,
                                 //        statusMessage.SensorId,
                                 //        statusMessage.Timestamp,
                                 //        p);
-                                racer.UpdateRacer(statusMessage.SensorId, statusMessage.Timestamp, p);
+
+                                racer.UpdateRacerSensor(statusMessage.SensorId, statusMessage.Timestamp);
+
+                                // Positional updates
+                                var standings = positionTracker[racer.RaceGroup];
+                                standings.Sort((r1, r2) => r1.CompareTo(r2));
+
+                                var postion = 1;
+                                foreach (var standing in standings)
+                                {
+                                    standing.UpdateRacerPosition(postion);
+                                    postion++;
+                                }
+
                             }
                         }
                     }

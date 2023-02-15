@@ -22,7 +22,7 @@ namespace RacerServer
 
         private string Add_Dialog(object sender, EventArgs e, TextBox box)
         {
-            OpenFileDialog fileDialog = new OpenFileDialog()
+            OpenFileDialog fileDialog = new()
             {
                 FileName = "Select a csv",
                 Filter = "CSV Files (*csv)|*csv",

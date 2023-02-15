@@ -91,7 +91,7 @@
             this.button3.TabIndex = 8;
             this.button3.Text = "←";
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.ActivateObserver);
+            this.button3.Click += new System.EventHandler(this.BigScreenSubscribe);
             // 
             // button4
             // 
@@ -102,6 +102,7 @@
             this.button4.TabIndex = 9;
             this.button4.Text = "→";
             this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.BigScreenUnsub);
             // 
             // button1
             // 
@@ -154,15 +155,14 @@
             // 
             // AvailableRacers
             // 
-            this.AvailableRacers.DisplayMember = "Name";
             this.AvailableRacers.FormattingEnabled = true;
             this.AvailableRacers.ItemHeight = 15;
             this.AvailableRacers.Location = new System.Drawing.Point(548, 52);
             this.AvailableRacers.Name = "AvailableRacers";
             this.AvailableRacers.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.AvailableRacers.Size = new System.Drawing.Size(192, 394);
+            this.AvailableRacers.Sorted = true;
             this.AvailableRacers.TabIndex = 16;
-            this.AvailableRacers.ValueMember = "Name";
             // 
             // racerBindingSource
             // 
