@@ -13,6 +13,7 @@ namespace RacerServer
             Racers = new Dictionary<Racer, IDisposable>();
 
             InitializeComponent();
+            this.Text = name;
             this.ObsName = name;
         }
 

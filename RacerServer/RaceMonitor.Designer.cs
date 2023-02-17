@@ -112,6 +112,7 @@
             this.button1.TabIndex = 12;
             this.button1.Text = "Add";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.CheaterScreenAdd);
             // 
             // label4
             // 
@@ -146,12 +147,14 @@
             // 
             // CheaterScreenList
             // 
+            this.CheaterScreenList.DisplayMember = "ObsName";
             this.CheaterScreenList.FormattingEnabled = true;
             this.CheaterScreenList.ItemHeight = 15;
             this.CheaterScreenList.Location = new System.Drawing.Point(139, 52);
             this.CheaterScreenList.Name = "CheaterScreenList";
             this.CheaterScreenList.Size = new System.Drawing.Size(120, 214);
             this.CheaterScreenList.TabIndex = 14;
+            this.CheaterScreenList.DoubleClick += new System.EventHandler(this.CheaterScreenReopen);
             // 
             // AvailableRacers
             // 

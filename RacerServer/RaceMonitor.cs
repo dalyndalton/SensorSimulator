@@ -115,6 +115,20 @@ namespace RacerServer
             // Update the Current Observer Box
             selectedRacers.ForEach(rac => AvailableRacers.Items.Add(rac));
         }
+
+        private void CheaterScreenAdd(object sender, EventArgs e) {
+            CheaterScreen screen = new(Prompt.ShowDialog("Screen Name", "Cheater Screen Display Setup"));
+            screen.Show();
+            this.CheaterScreenList.Items.Add(screen);
+
+        }
+        private void CheaterScreenReopen(object sender, EventArgs e)
+        {
+            foreach (CheaterScreen screen in this.CheaterScreenList.SelectedItems)
+            {
+                screen.Show();
+            }
+        }
     }
 
     internal static class Prompt

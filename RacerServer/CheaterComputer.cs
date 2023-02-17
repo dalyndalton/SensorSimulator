@@ -2,21 +2,22 @@
 
 namespace RacerServer
 {
+    public struct Cheater
+    {
+        public Racer r1;
+        public Racer r2;
+        public int sensor;
+
+        public Cheater(Racer r1, Racer r2, int sensor)
+        {
+            this.r1 = r1;
+            this.r2 = r2;
+            this.sensor = sensor;
+        }
+    }
+
     public class CheaterComputer : IObserver<Racer>, IObservable<CheaterComputer>
     {
-        public struct Cheater
-        {
-            Racer r1;
-            Racer r2;
-            int sensor;
-
-            public Cheater(Racer r1, Racer r2, int sensor)
-            {
-                this.r1 = r1;
-                this.r2 = r2;
-                this.sensor = sensor;
-            }
-        }
 
         private Dictionary<int, Dictionary<Racer, int>> timelist;
         public List<Cheater> Cheaters { get; private set; }
@@ -34,20 +35,29 @@ namespace RacerServer
         public void DetectCheater(Racer value)
         {
             // Check for cheater
-            IEnumerable<Racer> friends = from time in this.timelist[value.CurrentSensor - 1]
-                                         where Math.Abs(time.Value - value.LastTime) <= 3000 && time.Key != value && time.Key.RaceGroup != value.RaceGroup
-                                         select time.Key;
-            IEnumerable<Racer> newFriends = from time in this.timelist[value.CurrentSensor]
-                                            where Math.Abs(time.Value - value.LastTime) <= 3000 && time.Key != value && time.Key.RaceGroup != value.RaceGroup
-                                            select time.Key;
+            var prev_time = this.timelist[value.CurrentSensor - 1][value];
 
-            IEnumerable<Racer> sharedFriends = friends.Intersect(newFriends);
+            var friends = from racer_time in this.timelist[value.CurrentSensor - 1]
+                          where Math.Abs(racer_time.Value - prev_time) <= 3000 && racer_time.Key != value && racer_time.Key.RaceGroup != value.RaceGroup
+                          select racer_time;
+
+            var newFriends = from racer_time in this.timelist[value.CurrentSensor]
+                             where Math.Abs(racer_time.Value - value.LastTime) <= 3000 && racer_time.Key != value && racer_time.Key.RaceGroup != value.RaceGroup
+                             select racer_time;
+
+
+            IEnumerable<Racer> sharedFriends = from one in friends
+                                               join two in newFriends on one.Value equals two.Value
+                                               select one.Key;
             if (sharedFriends.Any())
             {
                 // add all cheating friends
                 foreach (Racer? friend in sharedFriends)
                 {
-                    Cheaters.Add(new Cheater(value, friend, value.CurrentSensor));
+                    // Lookup times
+                    var cheater = new Cheater(value, friend, value.CurrentSensor);
+                    Cheaters.Add(cheater);
+                    Console.WriteLine($" Cheater @ {cheater.sensor}: {cheater.r1} <-> {cheater.r2}");
                 }
 
                 // Notify observers that cheating list has ben updated
@@ -72,12 +82,15 @@ namespace RacerServer
         // Processes the logic for determining if the incoming racer was cheating
         public void OnNext(Racer value)
         {
-            if (timelist[value.CurrentSensor].ContainsKey(value) && value.CurrentSensor != 0) return; // Prevents double lookups
-            if (value.CurrentSensor >= 1 && timelist.ContainsKey(value.CurrentSensor)) DetectCheater(value);
-
-
             // Create a log for the sensor if not already existing
             if (!timelist.ContainsKey(value.CurrentSensor)) timelist.Add(value.CurrentSensor, new Dictionary<Racer, int>());
+            else
+            {
+                // Prevent the double lookup
+                if (!timelist[value.CurrentSensor].ContainsKey(value) && 
+                    value.CurrentSensor != 0) DetectCheater(value);
+            }
+
             // Log racer as seen
             timelist[value.CurrentSensor][value] = value.LastTime;
         }

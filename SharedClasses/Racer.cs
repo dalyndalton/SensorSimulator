@@ -96,5 +96,16 @@ namespace SharedClasses
 
             return 0;
         }
+
+        public override bool Equals(object? obj)
+        {
+            if ((obj == null) || !this.GetType().Equals(obj.GetType()))
+            {
+                return false;
+            }
+
+            var r = (Racer)obj;
+            return r.BibId == this.BibId;
+        }
     }
 }
