@@ -52,7 +52,7 @@ namespace RacerServer
                     try
                     {
                         string[] fields = parser.ReadFields();
-                        Racer racer = Racer.parseRacer(fields, groups, cheaterMonitor);
+                        Racer racer = Racer.parseRacer(fields, groups);
                         racers.Add(racer.BibId, racer);
                     }
                     catch (MalformedLineException e)
@@ -79,7 +79,12 @@ namespace RacerServer
                     }
                 }
             }
+            // Subscribe the cheating computer to all instances of racers
 
+            foreach (var racer in racers.Values)
+            {
+                racer.Subscribe(cheaterMonitor);
+            }
 
             // Start main file listener here
             reciever.Start();
