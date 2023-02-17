@@ -81,7 +81,7 @@ namespace RacerServer
                     }
                 }
             }
-            // Subscribe cheater to racers
+            // Subscribe the cheating computer to all instances of racers
 
             foreach (var racer in racers.Values)
             {

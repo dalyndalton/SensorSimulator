@@ -19,14 +19,46 @@ namespace RacerServer
         }
 
         private Dictionary<int, Dictionary<Racer, int>> timelist;
-        public List<Cheater> cheaters { get; private set; }
+        public List<Cheater> Cheaters { get; private set; }
+
+        // Observer list for cheaters
         private List<IObserver<CheaterComputer>> Observers { get; set; }
 
         public CheaterComputer()
         {
             timelist = new();
+            Cheaters = new();
+            Observers = new();
         }
 
+        public void DetectCheater(Racer value)
+        {
+            // Check for cheater
+            IEnumerable<Racer> friends = from time in this.timelist[value.CurrentSensor - 1]
+                                         where Math.Abs(time.Value - value.LastTime) <= 3000 && time.Key != value && time.Key.RaceGroup != value.RaceGroup
+                                         select time.Key;
+            IEnumerable<Racer> newFriends = from time in this.timelist[value.CurrentSensor]
+                                            where Math.Abs(time.Value - value.LastTime) <= 3000 && time.Key != value && time.Key.RaceGroup != value.RaceGroup
+                                            select time.Key;
+
+            IEnumerable<Racer> sharedFriends = friends.Intersect(newFriends);
+            if (sharedFriends.Any())
+            {
+                // add all cheating friends
+                foreach (Racer? friend in sharedFriends)
+                {
+                    Cheaters.Add(new Cheater(value, friend, value.CurrentSensor));
+                }
+
+                // Notify observers that cheating list has ben updated
+                foreach (IObserver<CheaterComputer> sub in Observers)
+                {
+                    sub.OnNext(this);
+                }
+            }
+        }
+
+        #region Observer Functions
         public void OnCompleted()
         {
             throw new NotImplementedException();
@@ -37,44 +69,24 @@ namespace RacerServer
             throw new NotImplementedException();
         }
 
+        // Processes the logic for determining if the incoming racer was cheating
         public void OnNext(Racer value)
         {
-            if (value.CurrentSensor >= 1 && timelist.ContainsKey(value.CurrentSensor))
-            {
-                // Check for cheater
-                IEnumerable<Racer> friends = from time in this.timelist[value.CurrentSensor - 1]
-                                             where Math.Abs(time.Value - value.LastTime) <= 3000 && time.Key != value && time.Key.RaceGroup != value.RaceGroup
-                                             select time.Key;
-                IEnumerable<Racer> newFriends = from time in this.timelist[value.CurrentSensor]
-                                                where Math.Abs(time.Value - value.LastTime) <= 3000 && time.Key != value && time.Key.RaceGroup != value.RaceGroup
-                                                select time.Key;
+            if (timelist[value.CurrentSensor].ContainsKey(value) && value.CurrentSensor != 0) return; // Prevents double lookups
+            if (value.CurrentSensor >= 1 && timelist.ContainsKey(value.CurrentSensor)) DetectCheater(value);
 
-                IEnumerable<Racer> sharedFriends = friends.Intersect(newFriends);
-                if (sharedFriends.Any())
-                {
-                    // add all cheating friends
-                    foreach (Racer? friend in sharedFriends)
-                    {
-                        cheaters.Add(new Cheater(value, friend, value.CurrentSensor));
-                    }
-
-                    // Notify observers that cheating list has ben updated
-                    foreach (IObserver<CheaterComputer> sub in Observers)
-                    {
-                        sub.OnNext(this);
-                    }
-                }
-            }
 
             // Create a log for the sensor if not already existing
-            if (!timelist.ContainsKey(value.CurrentSensor))
-            {
-                timelist.Add(value.CurrentSensor, new Dictionary<Racer, int>());
-            }
-            // Log as seen
+            if (!timelist.ContainsKey(value.CurrentSensor)) timelist.Add(value.CurrentSensor, new Dictionary<Racer, int>());
+            // Log racer as seen
             timelist[value.CurrentSensor][value] = value.LastTime;
         }
 
+        #endregion
+
+
+        #region Observable Functions
+        // Provide methods for CheaterDisplays to subscribe and unsub
         public IDisposable Subscribe(IObserver<CheaterComputer> observer)
         {
             if (!Observers.Contains(observer))
@@ -100,5 +112,6 @@ namespace RacerServer
                 if (!(_observer == null)) _observers.Remove(_observer);
             }
         }
+        #endregion
     }
 }

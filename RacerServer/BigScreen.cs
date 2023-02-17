@@ -1,4 +1,5 @@
 ﻿using SharedClasses;
+using System.Runtime.ExceptionServices;
 
 namespace RacerServer
 {
@@ -32,22 +33,24 @@ namespace RacerServer
 
         public void OnNext(Racer value)
         {
-            this.Invoke(this.UpdateItems);
+            this.Invoke(this.UpdateItems, value);
         }
 
-        public void UpdateItems()
+        public void UpdateItems(Racer value)
         {
             // Update each object in the list, as most all positions have changed
-            foreach (ListViewItem item in Display.Items)
-            {
-                var subject = item.Tag as Racer;
-                if (subject == null) return;
+            var res = Display.Items.Cast<ListViewItem>().Where((item) => item.Tag == value);
+            if (!res.Any()) return;
 
-                item.SubItems.Clear();
-                item.SubItems.Add(subject.RaceGroup.GroupName);
-                item.SubItems.Add(subject.Position.ToString());
-                item.SubItems.Add((subject.LastTime - subject.RaceGroup.StartTime).ToString());
-            }
+            var item = res.First();
+            var subject = item.Tag as Racer;
+            if (subject == null) return;
+
+            item.SubItems.Clear();
+            item.Text = subject.Name;
+            item.SubItems.Add(subject.RaceGroup.GroupName);
+            item.SubItems.Add(subject.Position.ToString());
+            item.SubItems.Add(((subject.LastTime - subject.RaceGroup.StartTime) / 1000).ToString());
         }
 
         public void SubscribeToRacer(Racer value)
@@ -59,16 +62,26 @@ namespace RacerServer
             ListViewItem item = new()
             {
                 Text = value.Name,
-                Tag = value,
+                Tag = value
             };
-            item.SubItems.Add(value.RaceGroup.ToString());
-            item.SubItems.Add(value.Position.ToString());
-            item.SubItems.Add((value.LastTime - value.RaceGroup.StartTime).ToString());
+
+            // Add subitems
+            item.SubItems.Add(value.RaceGroup.GroupName);
+            item.SubItems.Add(value.Position.ToString())
+                ;
+            item.SubItems.Add(((value.LastTime - value.RaceGroup.StartTime) / 1000).ToString());
             Display.Items.Add(item);
         }
 
         public void UnsubscribeToRacer(Racer value)
         {
+            // Find item in list internally to remove
+            var res = Display.Items.Cast<ListViewItem>().Where((item) => item.Tag == value);
+            if (!res.Any()) return;
+            var item = res.First();
+            Display.Items.Remove(item);
+
+            // remove from internal trackers
             Racers[value].Dispose();
             Racers.Remove(value);
         }
