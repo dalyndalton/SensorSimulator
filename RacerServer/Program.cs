@@ -43,6 +43,7 @@ namespace RacerServer
                 }
             }
 
+            // Parse Racers
             using (TextFieldParser parser = new(fileSelector.RacerCSVPath))
             {
                 parser.TextFieldType = FieldType.Delimited;
@@ -52,7 +53,7 @@ namespace RacerServer
                     try
                     {
                         string[] fields = parser.ReadFields();
-                        Racer racer = Racer.parseRacer(fields, groups, cheaterMonitor);
+                        Racer racer = Racer.parseRacer(fields, groups);
                         racers.Add(racer.BibId, racer);
                     }
                     catch (MalformedLineException e)
@@ -62,6 +63,7 @@ namespace RacerServer
                 }
             }
 
+            // Parse sensor
             using (TextFieldParser parser = new(fileSelector.SensorCSVPath))
             {
                 parser.TextFieldType = FieldType.Delimited;
@@ -79,7 +81,12 @@ namespace RacerServer
                     }
                 }
             }
+            // Subscribe cheater to racers
 
+            foreach (var racer in racers.Values)
+            {
+                racer.Subscribe(cheaterMonitor);
+            }
 
             // Start main file listener here
             reciever.Start();

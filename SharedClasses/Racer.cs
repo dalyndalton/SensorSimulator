@@ -16,29 +16,24 @@ namespace SharedClasses
         public int LastTime { get; private set; }
 
         private List<IObserver<Racer>> Observers { get; set; }
-        
-        // We distinquish cheater cpu so that we don't send positon updates
-        private IObserver<Racer> CheaterCPU { get; set; }
 
-        public Racer(string name, int bibId, RaceGroup group, IObserver<Racer> cpu)
+        public Racer(string name, int bibId, RaceGroup group)
         {
             this.Name = name;
             this.BibId = bibId;
             this.Observers = new List<IObserver<Racer>>();
             this.RaceGroup = group;
             this.Position = 0;
-            this.CheaterCPU = cpu;
             CurrentSensor = 0;
             LastTime = 0;
         }
 
-        public static Racer parseRacer(string[] fields, Dictionary<int, RaceGroup> groupList, IObserver<Racer> cpu)
+        public static Racer parseRacer(string[] fields, Dictionary<int, RaceGroup> groupList)
         {
             return new Racer(
                 fields[0] + ' ' + fields[1],
                 Int32.Parse(fields[2]),
-                groupList[Int32.Parse(fields[3])],
-                cpu
+                groupList[Int32.Parse(fields[3])]
                 );
         }
 
@@ -47,8 +42,7 @@ namespace SharedClasses
             this.CurrentSensor = sensor;
             this.LastTime = time;
 
-            CheaterCPU.OnNext(this);
-            Observers.ForEach((obs) => obs.OnNext(this));
+            foreach (var obs in Observers) obs.OnNext(this);
         }
 
         public void UpdateRacerPosition(int position)
