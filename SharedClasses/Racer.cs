@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace SharedClasses
 {
+    // HEY THIS IS A PATTERN HERE, LOOK AT RACERDISPLAY TO SEE THE OBSERVER
     public class Racer : IObservable<Racer>, IComparable<Racer>
     {
         public string Name { get; set; }
@@ -41,24 +42,29 @@ namespace SharedClasses
         }
         public void UpdateRacerSensor(int sensor, int time)
         {
-            this.CurrentSensor = sensor;
-            this.LastTime = time;
-
-            foreach (var obs in Observers) obs.OnNext(this);
+            lock (this)
+            {
+                this.CurrentSensor = sensor;
+                this.LastTime = time;
+                Parallel.ForEach(Observers, obs => obs.OnNext(this));
+            }
         }
 
         public void UpdateRacerPosition(int position)
         {
             this.Position = position;
-            foreach(var obs in Observers) obs.OnNext(this);
+            Parallel.ForEach(Observers, obs => obs.OnNext(this));
         }
 
         // Observers are Subscribed to here, and return their unsubscribers
         public IDisposable Subscribe(IObserver<Racer> observer)
         {
-            if (!Observers.Contains(observer))
+            lock (Observers)
             {
-                Observers.Add(observer);
+                if (!Observers.Contains(observer))
+                {
+                    Observers.Add(observer);
+                }
             }
 
             observer.OnNext(this);
@@ -77,7 +83,9 @@ namespace SharedClasses
 
             public void Dispose()
             {
-                if (!(_observer == null)) _observers.Remove(_observer);
+                if (_observer == null) return;
+                _observers.Remove(_observer);
+
             }
         }
 

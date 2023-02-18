@@ -16,6 +16,7 @@ namespace RacerServer
         }
     }
 
+    // THIS IS LIKE THE PATTERN OF ALL PATTERNS JUST LOOK HERE
     public class CheaterComputer : IObserver<Racer>, IObservable<CheaterComputer>
     {
 
@@ -34,8 +35,12 @@ namespace RacerServer
 
         public void DetectCheater(Racer value)
         {
-            // Check for cheater
-            var prev_time = this.timelist[value.CurrentSensor - 1][value];
+            // Check for cheater, and handle the person not found errors
+            if (!this.timelist[value.CurrentSensor - 1].TryGetValue(value, out var prev_time)) 
+            {
+                Console.WriteLine($"Possible data corruption, missing value for {value.BibId} @ S{value.CurrentSensor - 1}");
+                return;
+            };
 
             var friends = from racer_time in this.timelist[value.CurrentSensor - 1]
                           where Math.Abs(racer_time.Value - prev_time) <= 3000 && racer_time.Key != value && racer_time.Key.RaceGroup != value.RaceGroup
@@ -47,7 +52,7 @@ namespace RacerServer
 
 
             IEnumerable<Racer> sharedFriends = from one in friends
-                                               join two in newFriends on one.Value equals two.Value
+                                               join two in newFriends on one.Key equals two.Key
                                                select one.Key;
             if (sharedFriends.Any())
             {
@@ -57,14 +62,11 @@ namespace RacerServer
                     // Lookup times
                     var cheater = new Cheater(value, friend, value.CurrentSensor);
                     Cheaters.Add(cheater);
-                    Console.WriteLine($" Cheater @ {cheater.sensor}: {cheater.r1} <-> {cheater.r2}");
+                    //Console.WriteLine($" Cheater @ {cheater.sensor}: {cheater.r1} <-> {cheater.r2}");
                 }
 
                 // Notify observers that cheating list has ben updated
-                foreach (IObserver<CheaterComputer> sub in Observers)
-                {
-                    sub.OnNext(this);
-                }
+                Parallel.ForEach(Observers, obs => obs.OnNext(this));
             }
         }
 

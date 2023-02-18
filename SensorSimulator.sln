@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messages", "Messages\Messages.csproj", "{88244493-19F3-4FC8-B859-39742A4291FB}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedClasses", "SharedClasses\SharedClasses.csproj", "{2C3530FC-9503-4ADA-ADDE-3682441415D5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RacerServer", "RacerServer\RacerServer.csproj", "{091EE6A5-BEA5-4319-83AA-705AB19320B1}"
@@ -17,10 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{88244493-19F3-4FC8-B859-39742A4291FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{88244493-19F3-4FC8-B859-39742A4291FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{88244493-19F3-4FC8-B859-39742A4291FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{88244493-19F3-4FC8-B859-39742A4291FB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2C3530FC-9503-4ADA-ADDE-3682441415D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2C3530FC-9503-4ADA-ADDE-3682441415D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C3530FC-9503-4ADA-ADDE-3682441415D5}.Release|Any CPU.ActiveCfg = Release|Any CPU

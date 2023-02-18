@@ -11,10 +11,10 @@ using System.Xml.Linq;
 
 namespace RacerServer
 {
-    public partial class CheaterScreen : Form, IObserver<CheaterComputer>
+    public partial class CheaterDisplay : Form, IObserver<CheaterComputer>
     {
         public string ObsName { get; set; }
-        public CheaterScreen(string name)
+        public CheaterDisplay(string name)
         {
             InitializeComponent();
 
@@ -39,8 +39,13 @@ namespace RacerServer
 
         public void OnNext(CheaterComputer value)
         {
+            this.Invoke(UpdateList, value);
+        }
+
+        public void UpdateList(CheaterComputer value)
+        {
             // Filter and find the current cheater list
-            var display_list = this.CheaterDisplay.Items.Cast<ListViewItem>().ToList();
+            var display_list = this.CheaterList.Items.Cast<ListViewItem>().ToList();
             var current_cheaters = from item in display_list
                                    select item.Tag;
 
@@ -64,6 +69,8 @@ namespace RacerServer
                 {
                     Text = cheater.r2.Name
                 });
+
+                this.CheaterList.Items.Add(item);
             }
         }
         private void OnFormClosing(object sender, FormClosingEventArgs e)

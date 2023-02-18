@@ -5,25 +5,27 @@ namespace RacerServer
     public partial class RaceMonitor : Form
     {
 
-        public List<BigScreen> screens;
+        public List<RacerDisplay> screens;
         private Dictionary<int, Racer> racers;
         private Dictionary<int, RaceGroup> groups;
         private Dictionary<int, int> sensors;
+        private CheaterComputer cpu;
 
-        public RaceMonitor(Dictionary<int, Racer> racers, Dictionary<int, RaceGroup> groups, Dictionary<int, int> sensors)
+        public RaceMonitor(Dictionary<int, Racer> racers, Dictionary<int, RaceGroup> groups, Dictionary<int, int> sensors, CheaterComputer cpu)
         {
             this.racers = racers;
             this.groups = groups;
             this.sensors = sensors;
             this.screens = new();
+            this.cpu = cpu;
             InitializeComponent();
         }
 
         private void BigScreenAdd(object sender, EventArgs e)
         {
-            BigScreen screen = new(Prompt.ShowDialog("Name", "Big Screen Display Setup"));
+            RacerDisplay screen = new(Prompt.ShowDialog("Name", "Big Screen Display Setup"));
             screen.Show();
-            this.BigScreenList.Items.Add(screen);
+            this.BigScreenList.SelectedIndex = this.BigScreenList.Items.Add(screen);
         }
 
         private void BigScreenList_SelectedIndexChanged(object sender, EventArgs e)
@@ -34,7 +36,7 @@ namespace RacerServer
             this.CurrentObserverBox.Items.Clear();
 
             // Load in valid items
-            BigScreen? screen = this.BigScreenList.SelectedItem as BigScreen;
+            RacerDisplay? screen = this.BigScreenList.SelectedItem as RacerDisplay;
             if (screen != null)
             {
                 foreach (Racer c in screen.Racers.Keys)
@@ -54,14 +56,14 @@ namespace RacerServer
 
         private void BigScreenReopen(object sender, EventArgs e)
         {
-            foreach (BigScreen screen in this.BigScreenList.SelectedItems)
+            foreach (RacerDisplay screen in this.BigScreenList.SelectedItems)
             {
                 screen.Show();
             }
         }
         private void BigScreenSubscribe(object sender, EventArgs e)
         {
-            BigScreen? obs = BigScreenList.SelectedItem as BigScreen;
+            RacerDisplay? obs = BigScreenList.SelectedItem as RacerDisplay;
             if (obs == null) return;
 
             List<Racer> selectedRacers = new();
@@ -89,7 +91,7 @@ namespace RacerServer
         }
         private void BigScreenUnsub(object sender, EventArgs e)
         {
-            BigScreen? obs = BigScreenList.SelectedItem as BigScreen;
+            RacerDisplay? obs = BigScreenList.SelectedItem as RacerDisplay;
             if (obs == null) return;
 
             List<Racer> selectedRacers = new();
@@ -116,15 +118,17 @@ namespace RacerServer
             selectedRacers.ForEach(rac => AvailableRacers.Items.Add(rac));
         }
 
-        private void CheaterScreenAdd(object sender, EventArgs e) {
-            CheaterScreen screen = new(Prompt.ShowDialog("Screen Name", "Cheater Screen Display Setup"));
+        private void CheaterScreenAdd(object sender, EventArgs e)
+        {
+            CheaterDisplay screen = new(Prompt.ShowDialog("Screen Name", "Cheater Screen Display Setup"));
+            cpu.Subscribe(screen);
             screen.Show();
             this.CheaterScreenList.Items.Add(screen);
 
         }
         private void CheaterScreenReopen(object sender, EventArgs e)
         {
-            foreach (CheaterScreen screen in this.CheaterScreenList.SelectedItems)
+            foreach (CheaterDisplay screen in this.CheaterScreenList.SelectedItems)
             {
                 screen.Show();
             }

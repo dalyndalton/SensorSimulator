@@ -92,7 +92,7 @@ namespace RacerServer
             reciever.Start();
 
             // Start main GUI
-            RaceMonitor monitor = new(racers, groups, sensors);
+            RaceMonitor monitor = new(racers, groups, sensors, cheaterMonitor);
             Application.Run(monitor);
         }
     }

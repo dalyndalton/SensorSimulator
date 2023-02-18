@@ -2,7 +2,7 @@
 
 namespace RacerServer
 {
-    partial class BigScreen 
+    partial class RacerDisplay 
     {
         /// <summary>
         /// Required designer variable.

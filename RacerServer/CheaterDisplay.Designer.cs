@@ -1,6 +1,6 @@
 ﻿namespace RacerServer
 {
-    partial class CheaterScreen
+    partial class CheaterDisplay
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.CheaterDisplay = new System.Windows.Forms.ListView();
+            this.CheaterList = new System.Windows.Forms.ListView();
             this.Sensor = new System.Windows.Forms.ColumnHeader();
             this.Racer1 = new System.Windows.Forms.ColumnHeader();
             this.Racer2 = new System.Windows.Forms.ColumnHeader();
@@ -36,18 +36,18 @@
             // 
             // CheaterDisplay
             // 
-            this.CheaterDisplay.AllowColumnReorder = true;
-            this.CheaterDisplay.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.CheaterList.AllowColumnReorder = true;
+            this.CheaterList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.Sensor,
             this.Racer1,
             this.Racer2});
-            this.CheaterDisplay.Location = new System.Drawing.Point(12, 12);
-            this.CheaterDisplay.Name = "CheaterDisplay";
-            this.CheaterDisplay.ShowItemToolTips = true;
-            this.CheaterDisplay.Size = new System.Drawing.Size(483, 497);
-            this.CheaterDisplay.TabIndex = 0;
-            this.CheaterDisplay.UseCompatibleStateImageBehavior = false;
-            this.CheaterDisplay.View = System.Windows.Forms.View.Details;
+            this.CheaterList.Location = new System.Drawing.Point(12, 12);
+            this.CheaterList.Name = "CheaterDisplay";
+            this.CheaterList.ShowItemToolTips = true;
+            this.CheaterList.Size = new System.Drawing.Size(483, 497);
+            this.CheaterList.TabIndex = 0;
+            this.CheaterList.UseCompatibleStateImageBehavior = false;
+            this.CheaterList.View = System.Windows.Forms.View.Details;
             // 
             // Sensor
             // 
@@ -69,7 +69,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(537, 521);
-            this.Controls.Add(this.CheaterDisplay);
+            this.Controls.Add(this.CheaterList);
             this.Name = "CheaterScreen";
             this.Text = "Cheater Screen";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
@@ -79,7 +79,7 @@
 
         #endregion
 
-        private ListView CheaterDisplay;
+        private ListView CheaterList;
         private ColumnHeader Sensor;
         private ColumnHeader Racer1;
         private ColumnHeader Racer2;

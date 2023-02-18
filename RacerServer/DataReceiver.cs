@@ -83,13 +83,12 @@ namespace RacerServer
                                 standings.Sort((r1, r2) => r1.CompareTo(r2));
 
                                 var postion = 1;
-                                foreach (var standing in standings)
+                                for (int i = 0; i < standings.Count; i++)
                                 {
-                                    standing.UpdateRacerPosition(postion);
-                                    postion++;
+                                        standings[i].UpdateRacerPosition(postion);
+                                        postion++;
                                 }
-
-                            }
+                        }
                         }
                     }
                 }
