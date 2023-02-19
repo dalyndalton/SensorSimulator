@@ -23,7 +23,7 @@ public class CheaterTesting
 
         Assert.True(computer.Cheaters.Any());
     }
-
+    [Fact]
     public void NoCheaterCheck()
     {
         var computer = new CheaterComputer();

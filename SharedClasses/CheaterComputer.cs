@@ -62,7 +62,7 @@ namespace RacerServer
                     // Lookup times
                     var cheater = new Cheater(value, friend, value.CurrentSensor);
                     Cheaters.Add(cheater);
-                    //Console.WriteLine($" Cheater @ {cheater.sensor}: {cheater.r1} <-> {cheater.r2}");
+                    Console.WriteLine($" Cheater @ {cheater.sensor,3}: {cheater.r1,-35} <-> {cheater.r2,-35}");
                 }
 
                 // Notify observers that cheating list has ben updated
@@ -98,7 +98,6 @@ namespace RacerServer
         }
 
         #endregion
-
 
         #region Observable Functions
         // Provide methods for CheaterDisplays to subscribe and unsub
